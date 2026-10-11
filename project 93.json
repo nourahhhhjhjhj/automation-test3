@@ -1,0 +1,155 @@
+{
+  "name": "project 93",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f9a86d77-8db3-4cd3-bc02-bd3284536cbf",
+              "leftValue": "={{ $json['KPI%'].replace('%','').toNumber() }}",
+              "rightValue": 93,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        48,
+        368
+      ],
+      "id": "463d61e0-88b1-441e-a6c8-c061c0a3e3d3",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "nout5148@gmail.com",
+        "subject": "LOW PERFORM - LESS THAN 93 -KPI",
+        "message": "=hello \n\nhere are the below employees less than 93 KPI \n\n{{ $json.html }}\n\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        448
+      ],
+      "id": "5d2cade7-41d2-4088-8cf3-0255b15e1c5d",
+      "name": "Send a message",
+      "webhookId": "08f7b26e-8837-454d-bdf5-fa4f96e872a0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "e3jdfcWaUabDW3oQ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let rows = '';\n\nfor (const item of $input.all()) {\n  const kpiColor = parseFloat(String(item.json['KPI%']).replace('%','')) < 80 ? '#ffcccc' : '#fff3cd';\n  rows += `\n    <tr>\n      <td style=\"border:1px solid #999; padding:6px;\">${item.json.Employee_ID}</td>\n      <td style=\"border:1px solid #999; padding:6px;\">${item.json.Employee_Name}</td>\n      <td style=\"border:1px solid #999; padding:6px;\">${item.json.City}</td>\n      <td style=\"border:1px solid #999; padding:6px;\">${item.json.Branch}</td>\n      <td style=\"border:1px solid #999; padding:6px;\">${item.json.Sales_Target}</td>\n      <td style=\"border:1px solid #999; padding:6px;\">${item.json.Actual_Sales}</td>\n      <td style=\"border:1px solid #999; padding:6px; background-color:${kpiColor}; font-weight:bold;\">${item.json['KPI%']}</td>\n      <td style=\"border:1px solid #999; padding:6px;\">${item.json.Supervisor}</td>\n    </tr>`;\n}\n\nconst html = `\n<table style=\"border-collapse:collapse; font-family:Arial, sans-serif; font-size:13px; width:100%;\">\n  <tr style=\"background-color:#d9d9d9;\">\n    <th style=\"border:1px solid #999; padding:6px;\">Employee_ID</th>\n    <th style=\"border:1px solid #999; padding:6px;\">Employee_Name</th>\n    <th style=\"border:1px solid #999; padding:6px;\">City</th>\n    <th style=\"border:1px solid #999; padding:6px;\">Branch</th>\n    <th style=\"border:1px solid #999; padding:6px;\">Sales_Target</th>\n    <th style=\"border:1px solid #999; padding:6px;\">Actual_Sales</th>\n    <th style=\"border:1px solid #999; padding:6px;\">KPI%</th>\n    <th style=\"border:1px solid #999; padding:6px;\">Supervisor</th>\n  </tr>\n  ${rows}\n</table>`;\n\nreturn [{ json: { html } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        288
+      ],
+      "id": "c23319a5-3f92-439d-b1fe-d0ab0eba21f7",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1UHQz9DnUh92zcFQYpzKnKEi4cXpZg2-JQ574Fjb6-z4",
+          "mode": "list",
+          "cachedResultName": "project",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UHQz9DnUh92zcFQYpzKnKEi4cXpZg2-JQ574Fjb6-z4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1400552804,
+          "mode": "list",
+          "cachedResultName": "Sales Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UHQz9DnUh92zcFQYpzKnKEi4cXpZg2-JQ574Fjb6-z4/edit#gid=1400552804"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -160,
+        368
+      ],
+      "id": "91de2040-325d-4ec4-971a-64400109b61f",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "vRZOCTFHYMrN3KSH",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "548c692e-290c-404e-8432-2ae93fcb912d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3d2591ec0ca7baaaf007b0a2bdaee370235f37bc7e54f350f3a9236cb8877262"
+  },
+  "id": "iJZ2fEsqMMCgE60m",
+  "tags": []
+}
